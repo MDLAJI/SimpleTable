@@ -344,7 +344,13 @@ namespace SimpleTable.Editor
             }
 
             // 如果行数据编辑器已打开,则在选择项改变时显示对应的数据
-            if (EditorWindow.HasOpenInstances<RowDataEditor>())
+            var isRowDataEditorOpening = false;
+#if UNITY_2019_1_OR_NEWER
+            isRowDataEditorOpening = EditorWindow.HasOpenInstances<RowDataEditor>();
+#else
+            isRowDataEditorOpening = Resources.FindObjectsOfTypeAll<RowDataEditor>().Length > 0
+#endif
+            if (isRowDataEditorOpening)
             {
                 TableViewItem<T> item = _items.Find((it) => { return it.id == selectedIds[0]; });
                 RowDataEditor.OpenWindow(target as UnityEngine.Object, _datas.IndexOf(item.Data));
