@@ -348,7 +348,7 @@ namespace SimpleTable.Editor
 #if UNITY_2019_1_OR_NEWER
             isRowDataEditorOpening = EditorWindow.HasOpenInstances<RowDataEditor>();
 #else
-            isRowDataEditorOpening = Resources.FindObjectsOfTypeAll<RowDataEditor>().Length > 0
+            isRowDataEditorOpening = Resources.FindObjectsOfTypeAll<RowDataEditor>().Length > 0;
 #endif
             if (isRowDataEditorOpening)
             {
