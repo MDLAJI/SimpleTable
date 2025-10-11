@@ -2,7 +2,7 @@
 
 SimpleTable是基于ScriptableObject实现的一个简单的Unity数据表编辑工具,让开发者可以在Unity内高效直观地编辑表格,同时也提供导入和导出数据的功能
 
-![](readmeImg/table_overview.png)
+![](ReadmeImg/table_overview.png)
 
 ## TODO
 
@@ -53,7 +53,7 @@ SimpleTable是基于ScriptableObject实现的一个简单的Unity数据表编辑
 ### 1.创建表头
 
 Tools -> SimpleTable -> 创建表格结构 , 点击打开窗口
-![](readmeImg/TableStructEditor.png)
+![](ReadmeImg/TableStructEditor.png)
 
 上方下拉框选择`New...` , 选择路径, 输入结构名, 点击`+ 新增字段`创建字段,勾选`显示代码预览`后可以看到即将生成的代码. 添加完字段后点击`新建/修改表结构`即可生成脚本
 
@@ -69,7 +69,7 @@ Tools -> SimpleTable -> 创建表格结构 , 点击打开窗口
 
 双击数据表ScriptableObject即可打开表格编辑器.
 
-![](readmeImg/DataTableEditor.png)
+![](ReadmeImg/DataTableEditor.png)
 
 + **工具栏** : 编辑器最上方为工具栏,可以选中数据表资产,导出数据表以及手动保存;
 
@@ -88,7 +88,7 @@ Tools -> SimpleTable -> 创建表格结构 , 点击打开窗口
 
 双击某一行或右键选择`编辑行`即可打开行数据编辑器,行数据编辑器是一个浮动窗口,可以拖拽放置到合适的位置;当行数据编辑器窗口打开时,单击表格编辑器中的某行即可显示该行的数据
 
-![](readmeImg/RowDataEditor.png)
+![](ReadmeImg/RowDataEditor.png)
 
 ### 6.导出数据表
 
@@ -96,14 +96,14 @@ Tools -> SimpleTable -> 创建表格结构 , 点击打开窗口
 
 导出的文件会保存数据表的类名和资产路径以及表头信息,在编辑时不应该修改这部分的内容,否则可能导致导入错误
 
-![](readmeImg/ExportToExcel.png)
+![](ReadmeImg/ExportToExcel.png)
 
 ### 7.导入数据表
 Tools -> SimpleTable -> 导入数据表 , 点击打开窗口
 
 点击浏览后,点击右下方筛选文件类型并选择要导入的文件
 
-![](readmeImg/SelectFile.png)
+![](ReadmeImg/SelectFile.png)
 
 点击导入,如果目标路径已存在数据表会自动覆盖,如果不存在则会自动创建
 
