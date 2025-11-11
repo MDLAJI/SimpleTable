@@ -151,7 +151,12 @@ namespace SimpleTable.Editor
                 var (tableTypes, tableTips, tableVariableNames, tableDatas) = SerializeDataTable(dataTableSO, ExportType.Lua);
 
                 // 写注释
+                FieldInfo f = dataTableSO.GetType().GetField(SimpleTableConst.tableStructFieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                Type dataStruct = f.GetValue(dataTableSO) as Type;
                 string result = $"--- {dataTableSO.name}\n";
+                result += $"--- {dataTableSO.GetType()}\n";
+                result += $"--- {dataStruct}\n";
+                result += $"--- {AssetDatabase.GetAssetPath(dataTableSO)}\n";
                 for (int i = 0; i < tableTypes.Count; i++)
                 {
                     result += $"---@param {tableVariableNames[i]} {tableTypes[i]} {tableTips[i]}\n";
@@ -362,7 +367,7 @@ namespace SimpleTable.Editor
         /// 序列化AnimationCurve
         /// </summary>
         /// <param name="curve"></param>
-        public static string SerializeAnimationCurve(AnimationCurve curve)
+        public static string SerializeAnimationCurve(AnimationCurve curve, ExportType exportType)
         {
             string result = string.Empty;
             if (curve == null) return result;
@@ -370,26 +375,57 @@ namespace SimpleTable.Editor
             result += "{";
 
             // 保存两个枚举值
-            result += $"\"preWrapMode\" : \"{curve.preWrapMode}\", ";
-            result += $"\"postWrapMode\" : \"{curve.postWrapMode}\", ";
+            if(exportType == ExportType.Lua)
+            {
+                result += $"preWrapMode = \"{curve.preWrapMode}\", ";
+                result += $"postWrapMode = \"{curve.postWrapMode}\", ";
+            }
+            else
+            {
+                result += $"\"preWrapMode\" : \"{curve.preWrapMode}\", ";
+                result += $"\"postWrapMode\" : \"{curve.postWrapMode}\", ";
+            }
+
 
             // 保存每个关键帧的值
-            result += "\"keyframe\" : [";
-            for (int i = 0; i < curve.keys.Length; i++)
+            if (exportType == ExportType.Lua)
             {
-                result += "{";
+                result += "keyframe = {";
+                for (int i = 0; i < curve.keys.Length; i++)
+                {
+                    result += "{";
 
-                result += $"\"time\":{curve.keys[i].time},";
-                result += $"\"value\":{curve.keys[i].value},";
-                result += $"\"inTangent\":{curve.keys[i].inTangent},";
-                result += $"\"outTangent\":{curve.keys[i].outTangent},";
-                result += $"\"inWeight\":{curve.keys[i].inWeight},";
-                result += $"\"outWeight\":{curve.keys[i].outWeight}";
+                    result += $"time = {curve.keys[i].time},";
+                    result += $"value = {curve.keys[i].value},";
+                    result += $"inTangent = {curve.keys[i].inTangent},";
+                    result += $"outTangent = {curve.keys[i].outTangent},";
+                    result += $"inWeight = {curve.keys[i].inWeight},";
+                    result += $"outWeight = {curve.keys[i].outWeight}";
 
+                    result += "}";
+                    if (i != curve.keys.Length - 1) result += ",";
+                }
                 result += "}";
-                if (i != curve.keys.Length - 1) result += ",";
             }
-            result += "]";
+            else
+            {
+                result += "\"keyframe\" : [";
+                for (int i = 0; i < curve.keys.Length; i++)
+                {
+                    result += "{";
+
+                    result += $"\"time\":{curve.keys[i].time},";
+                    result += $"\"value\":{curve.keys[i].value},";
+                    result += $"\"inTangent\":{curve.keys[i].inTangent},";
+                    result += $"\"outTangent\":{curve.keys[i].outTangent},";
+                    result += $"\"inWeight\":{curve.keys[i].inWeight},";
+                    result += $"\"outWeight\":{curve.keys[i].outWeight}";
+
+                    result += "}";
+                    if (i != curve.keys.Length - 1) result += ",";
+                }
+                result += "]";
+            }
 
             result += "}";
 
@@ -399,34 +435,72 @@ namespace SimpleTable.Editor
         /// <summary>
         /// 序列化Gradient
         /// </summary>
-        public static string SerializeGradient(Gradient gradient)
+        public static string SerializeGradient(Gradient gradient, ExportType exportType)
         {
             string result = string.Empty;
             result += "{";
 
-            result += $"\"mode\" : \"{gradient.mode.ToString()}\",";
+            // 模式
+            if (exportType == ExportType.Lua)
+                result += $"mode = \"{gradient.mode.ToString()}\",";
+            else
+                result += $"\"mode\" : \"{gradient.mode.ToString()}\",";
 
-            result += "\"colorKeys\":[";
-            for (int i = 0; i < gradient.colorKeys.Length; i++)
+            // 颜色key
+            if (exportType == ExportType.Lua)
             {
-                result += "{";
-                result += $"\"r\":{gradient.colorKeys[i].color.r}, \"g\":{gradient.colorKeys[i].color.g}, \"b\":{gradient.colorKeys[i].color.b}, \"a\":{gradient.colorKeys[i].color.a}, ";
-                result += $"\"time\":{gradient.colorKeys[i].time}";
-                result += "}";
-                if (i == 0) result += ",";
+                result += "colorKeys = {";
+                for (int i = 0; i < gradient.colorKeys.Length; i++)
+                {
+                    result += "{";
+                    result += $"r = {gradient.colorKeys[i].color.r}, g = {gradient.colorKeys[i].color.g}, b = {gradient.colorKeys[i].color.b}, a = {gradient.colorKeys[i].color.a}, ";
+                    result += $"time = {gradient.colorKeys[i].time}";
+                    result += "}";
+                    if (i != gradient.colorKeys.Length - 1) result += ",";
+                }
+                result += "},";
             }
-            result += "],";
+            else
+            {
+                result += "\"colorKeys\":[";
+                for (int i = 0; i < gradient.colorKeys.Length; i++)
+                {
+                    result += "{";
+                    result += $"\"r\":{gradient.colorKeys[i].color.r}, \"g\":{gradient.colorKeys[i].color.g}, \"b\":{gradient.colorKeys[i].color.b}, \"a\":{gradient.colorKeys[i].color.a}, ";
+                    result += $"\"time\":{gradient.colorKeys[i].time}";
+                    result += "}";
+                    if (i != gradient.colorKeys.Length - 1) result += ",";
+                }
+                result += "],";
+            }
 
-            result += "\"alphaKeys\":[";
-            for (int i = 0; i < gradient.alphaKeys.Length; i++)
+            // 透明度key
+            if (exportType == ExportType.Lua)
             {
-                result += "{";
-                result += $"\"alpha\":{gradient.alphaKeys[i].alpha}, ";
-                result += $"\"time\":{gradient.alphaKeys[i].time}";
+                result += "alphaKeys = {";
+                for (int i = 0; i < gradient.alphaKeys.Length; i++)
+                {
+                    result += "{";
+                    result += $"alpha = {gradient.alphaKeys[i].alpha}, ";
+                    result += $"time = {gradient.alphaKeys[i].time}";
+                    result += "}";
+                    if (i != gradient.alphaKeys.Length - 1) result += ",";
+                }
                 result += "}";
-                if (i == 0) result += ",";
             }
-            result += "]";
+            else
+            {
+                result += "\"alphaKeys\":[";
+                for (int i = 0; i < gradient.alphaKeys.Length; i++)
+                {
+                    result += "{";
+                    result += $"\"alpha\":{gradient.alphaKeys[i].alpha}, ";
+                    result += $"\"time\":{gradient.alphaKeys[i].time}";
+                    result += "}";
+                    if (i != gradient.alphaKeys.Length - 1) result += ",";
+                }
+                result += "]";
+            }
 
             result += "}";
 
@@ -555,12 +629,12 @@ namespace SimpleTable.Editor
             else if (fieldType == typeof(AnimationCurve))
             {
                 var curve = (AnimationCurve)fieldValue;
-                return SerializeAnimationCurve(curve);
+                return SerializeAnimationCurve(curve, exportType);
             }
             else if (fieldType == typeof(Gradient))
             {
                 var gradient = (Gradient)fieldValue;
-                return SerializeGradient(gradient);
+                return SerializeGradient(gradient, exportType);
             }
             else if (fieldType.IsSubclassOf(typeof(UnityEngine.Object)))
             {

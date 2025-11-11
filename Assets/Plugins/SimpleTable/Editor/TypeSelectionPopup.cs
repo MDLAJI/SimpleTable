@@ -61,7 +61,7 @@ namespace SimpleTable.Editor
 
             currentInstance = CreateInstance<TypeSelectionPopup>();
             currentInstance.onTypeSelected = callback;
-            currentInstance.titleContent = new GUIContent($"选择类型 (V{SimpleTableConst.version})");
+            currentInstance.titleContent = new GUIContent($"选择类型");
             currentInstance.minSize = new Vector2(450, 650);
 
             // 居中显示窗口
